@@ -5,7 +5,7 @@ class Config(object):
     DEBUG = True
     CSRF_ENABLED = True
     SECRET = "britecore-project-by-nagashayan"
-    SQLALCHEMY_DATABASE_URI = "postgresql://localhost/britecore_api"
+    SQLALCHEMY_DATABASE_URI = "postgresql://postgres:root@localhost:5432/britecore_api"
 
 class DevelopmentConfig(Config):
     """Configurations for Development."""
@@ -14,7 +14,7 @@ class DevelopmentConfig(Config):
 class TestingConfig(Config):
     """Configurations for Testing, with a separate test database."""
     TESTING = True
-    SQLALCHEMY_DATABASE_URI = 'postgresql://localhost/test_db'
+    SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:root@localhost:5432/test_db'
     DEBUG = True
 
 app_config = {
