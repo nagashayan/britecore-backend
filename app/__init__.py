@@ -60,4 +60,53 @@ def create_app(config_name):
             response.status_code = 200
             return response
 
+    @app.route('/feature/<int:client_id>', methods=['GET', 'PUT', 'DELETE'])
+    def feature_manipulation(client_id, **kwargs):
+     # retrieve a buckelist using it's ID
+        feature = FeatureDetails.query.filter_by(client_id=client_id).first()
+        if not feature:
+            # Raise an HTTPException with a 404 not found status code
+            abort(404)
+
+        if request.method == 'DELETE':
+            feature.delete()
+            return {
+            "message": "feature {} deleted successfully".format(feature.client_id) 
+         }, 200
+
+        elif request.method == 'PUT':
+
+            feature.client_id = str(request.data.get('client_id', ''))
+            feature.title = str(request.data.get('title', ''))
+            feature.description = str(request.data.get('description', ''))
+            feature.target_date = str(request.data.get('target_date', ''))
+            feature.product_area = str(request.data.get('product_area', ''))
+
+            
+            feature.save()
+            response = jsonify({
+                'client_id': feature.client_id,
+                'title': feature.title,
+                'description': feature.description,
+                'target_date': feature.target_date,
+                'product_area': feature.product_area,
+                'date_modified': feature.date_modified
+            })
+            response.status_code = 200
+            return response
+
+        else:
+        # GET
+            response = jsonify({
+               'client_id': feature.client_id,
+                'title': feature.title,
+                'description': feature.description,
+                'target_date': feature.target_date,
+                'product_area': feature.product_area,
+                'date_created': feature.date_created,
+                'date_modified': feature.date_modified
+            })
+            response.status_code = 200
+            return response
+
     return app

@@ -1,6 +1,7 @@
 import os
 import unittest
 from app import create_app, db
+from flask import json
 
 class BasicTests(unittest.TestCase):
  
@@ -42,6 +43,48 @@ class BasicTests(unittest.TestCase):
         res = self.client().get('/feature/')
         self.assertEqual(res.status_code, 200)
         self.assertIn('Need filtering of data', str(res.data))
-   
+    
+    def test_feature_deletion(self):
+        """Test API can delete an existing feature. (DELETE request)."""
+        response = self.client().post(
+            '/feature/',
+            data=self.feature)
+        self.assertEqual(response.status_code, 201)
+        res = self.client().delete('/feature/1')
+        self.assertEqual(res.status_code, 200)
+        # Test to see if it exists, should return a 404
+        result = self.client().get('/feature/1')
+        self.assertEqual(result.status_code, 404)
+
+
+    def test_api_can_get_feature_by_id(self):
+        """Test API can get a single feature by using it's client_id."""
+        response = self.client().post('/feature/', data=self.feature)
+        self.assertEqual(response.status_code, 201)
+        result_in_json = json.loads(response.data.decode('utf-8').replace("'", "\""))
+        result = self.client().get('/feature/1')
+        self.assertEqual(result.status_code, 200)
+        self.assertIn('Need filtering of data', str(result.data))
+
+    def test_feature_can_be_edited(self):
+        """Test API can edit an existing feature. (PUT request)"""
+        response = self.client().post(
+            '/feature/',
+            data=self.feature)
+        self.assertEqual(response.status_code, 201)
+        response = self.client().put(
+            '/feature/1',
+            data={
+                'client_id': self.feature['client_id'],
+                'title': 'Need enum filtering of data',
+                'description': self.feature['description'],
+                'target_date': self.feature['target_date'],
+                'product_area': self.feature['product_area']
+            })
+        self.assertEqual(response.status_code, 200)
+        results = self.client().get('/feature/1')
+        self.assertIn('Need enum filtering of data', str(results.data))
+
+
 if __name__ == "__main__":
     unittest.main()
