@@ -1,27 +1,27 @@
 import os
 import unittest
-from hello import app
+from app import create_app, db
 
 class BasicTests(unittest.TestCase):
  
      # executed prior to each test
     def setUp(self):
-        app.config['TESTING'] = True
-        app.config['DEBUG'] = True
+        """Define test variables and initialize app."""
+        self.app = create_app(config_name="testing")
+        self.client = self.app.test_client
+        
+        self.assertEqual(self.app.debug, True)
 
-        self.app = app.test_client()
-      
-        self.assertEqual(app.debug, True)
- 
+        self.feature = {'title': 'Need filtering of data', 'description': 'should be able to filter to either order','product_area':'sales','target_date':'22/7/2018'}
+    
+        # binds the app to the current context
+        with self.app.app_context():
+            # create all tables
+            db.create_all()
     # executed after each test
     def tearDown(self):
         pass
 
-    #initial test
-    def test_main_page(self):
-        response = self.app.get('/', follow_redirects=True)
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data, b'Hello, World!')
-
+   
 if __name__ == "__main__":
     unittest.main()
