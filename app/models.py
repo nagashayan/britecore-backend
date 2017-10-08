@@ -15,9 +15,13 @@ class FeatureDetails(db.Model):
         db.DateTime, default=db.func.current_timestamp(),
         onupdate=db.func.current_timestamp())
 
-    def __init__(self, name):
+    def __init__(self, client_id, title, description, target_date, product_area):
         """initialize with name."""
-        self.name = name
+        self.client_id = client_id
+        self.title = title
+        self.description = description
+        self.target_date = target_date
+        self.product_area = product_area
 
     def save(self):
         db.session.add(self)
@@ -25,11 +29,11 @@ class FeatureDetails(db.Model):
 
     @staticmethod
     def get_all():
-        return Featurelist.query.all()
+        return FeatureDetails.query.all()
 
     def delete(self):
         db.session.delete(self)
         db.session.commit()
 
     def __repr__(self):
-        return "<Featurelist: {}>".format(self.name)
+        return "<FeatureDetails: {}>".format(self.title)
