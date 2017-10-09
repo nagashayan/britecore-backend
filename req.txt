@@ -1,5 +1,5 @@
 flask
-flask-sqlalchemy
+#flask-sqlalchemy
 psycopg2
 flask-migrate
 Flask-API
