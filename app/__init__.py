@@ -30,16 +30,32 @@ def create_app(config_name):
             if title:
                 feature = FeatureDetails(client_id, title, description, target_date, product_area, client_priority)
                 feature.save()
-                response = jsonify_data(feature)
+                response = jsonify({
+               'client_id': feature.client_id,
+                'title': feature.title,
+                'description': feature.description,
+                'target_date': feature.target_date,
+                'product_area': feature.product_area,
+                'date_created': feature.date_created,
+                'date_modified': feature.date_modified
+            })
                 response.status_code = 201
                 return response
         else:
-            # GET
+            # GET All
             features = FeatureDetails.get_all()
             results = []
 
             for feature in features:
-                obj = jsonify_data(feature)
+                obj ={
+                'client_id': feature.client_id,
+                    'title': feature.title,
+                    'description': feature.description,
+                    'target_date': feature.target_date,
+                    'product_area': feature.product_area,
+                    'date_created': feature.date_created,
+                    'date_modified': feature.date_modified
+                }
                 results.append(obj)
             response = jsonify(results)
             response.status_code = 200
@@ -69,28 +85,25 @@ def create_app(config_name):
             feature.client_priority = str(request.data.get('client_priority', ''))
             
             feature.save()
-            response = jsonify(jsonify_data(feature))
+            response = jsonify(json_data(feature))
             response.status_code = 200
             return response
 
         else:
         # GET
-            response = jsonify(jsonify_data(feature))
-            response.status_code = 200
-            return response
-
-    return app
-def jsonify_data(feature):
-
-    return {
+            response = jsonify({
                'client_id': feature.client_id,
                 'title': feature.title,
                 'description': feature.description,
                 'target_date': feature.target_date,
                 'product_area': feature.product_area,
                 'date_created': feature.date_created,
-                'date_modified': feature.date_modified,
-                'client_priority': feature.client_priority
-            };
+                'date_modified': feature.date_modified
+            })
+            response.status_code = 200
+            return response
+
+    return app
+
 
     
