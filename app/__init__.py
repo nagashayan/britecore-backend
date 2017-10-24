@@ -32,6 +32,7 @@ def create_app(config_name):
                 feature.save()
                 response = jsonify({
                'client_id': feature.client_id,
+               'client_priority': feature.client_priority,
                 'title': feature.title,
                 'description': feature.description,
                 'target_date': feature.target_date,
@@ -49,6 +50,7 @@ def create_app(config_name):
             for feature in features:
                 obj ={
                 'client_id': feature.client_id,
+                'client_priority': feature.client_priority,
                     'title': feature.title,
                     'description': feature.description,
                     'target_date': feature.target_date,
@@ -85,7 +87,16 @@ def create_app(config_name):
             feature.client_priority = str(request.data.get('client_priority', ''))
             
             feature.save()
-            response = jsonify(json_data(feature))
+            response = jsonify({
+               'client_id': feature.client_id,
+                'client_priority': feature.client_priority,
+                'title': feature.title,
+                'description': feature.description,
+                'target_date': feature.target_date,
+                'product_area': feature.product_area,
+                'date_created': feature.date_created,
+                'date_modified': feature.date_modified
+            })
             response.status_code = 200
             return response
 
@@ -93,6 +104,7 @@ def create_app(config_name):
         # GET
             response = jsonify({
                'client_id': feature.client_id,
+                'client_priority': feature.client_priority,
                 'title': feature.title,
                 'description': feature.description,
                 'target_date': feature.target_date,
