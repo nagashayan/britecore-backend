@@ -1,4 +1,4 @@
-from app import db
+from . import db
 
 class FeatureDetails(db.Model):
     """This class represents the FeatureDetailsetlist table."""
@@ -10,14 +10,16 @@ class FeatureDetails(db.Model):
     description = db.Column(db.String(255))
     target_date = db.Column(db.DateTime)
     product_area = db.Column(db.String(255))
+    client_priority = db.Column(db.Integer)
     date_created = db.Column(db.DateTime, default=db.func.current_timestamp())
     date_modified = db.Column(
         db.DateTime, default=db.func.current_timestamp(),
         onupdate=db.func.current_timestamp())
 
-    def __init__(self, client_id, title, description, target_date, product_area):
+    def __init__(self, client_id, title, description, target_date, product_area, client_priority):
         """initialize with name."""
         self.client_id = client_id
+        self.client_priority = client_priority
         self.title = title
         self.description = description
         self.target_date = target_date

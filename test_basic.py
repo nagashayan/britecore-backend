@@ -9,6 +9,7 @@ class BasicTests(unittest.TestCase):
     def setUp(self):
         """Define test variables and initialize app."""
         self.app = create_app(config_name="testing")
+        print(self.app)
         self.client = self.app.test_client
         
         self.assertEqual(self.app.debug, True)

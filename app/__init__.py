@@ -7,9 +7,9 @@ from instance.config import app_config
 
 # initialize sql-alchemy
 db = SQLAlchemy()
-
+print(app_config["development"])
 def create_app(config_name):
-    from models import FeatureDetails
+    from .models import FeatureDetails
 
     app = FlaskAPI(__name__, instance_relative_config=True)
     app.config.from_object(app_config[config_name])
@@ -26,18 +26,11 @@ def create_app(config_name):
             description = str(request.data.get('description', ''))
             target_date = str(request.data.get('target_date', ''))
             product_area = str(request.data.get('product_area', ''))
+            client_priority = str(request.data.get('client_priority', ''))
             if title:
-                feature = FeatureDetails(client_id, title, description, target_date, product_area)
+                feature = FeatureDetails(client_id, title, description, target_date, product_area, client_priority)
                 feature.save()
-                response = jsonify({
-                    'client_id': feature.client_id,
-                    'title': feature.title,
-                    'description': feature.description,
-                    'target_date': feature.target_date,
-                    'product_area' : feature.product_area,
-                    'date_created': feature.date_created,
-                    'date_modified': feature.date_modified
-                })
+                response = jsonify_data(feature)
                 response.status_code = 201
                 return response
         else:
@@ -46,15 +39,7 @@ def create_app(config_name):
             results = []
 
             for feature in features:
-                obj = {
-                    'client_id': feature.client_id,
-                    'title': feature.title,
-                    'description': feature.description,
-                    'target_date': feature.target_date,
-                    'product_area': feature.product_area,
-                    'date_created': feature.date_created,
-                    'date_modified': feature.date_modified
-                }
+                obj = jsonify_data(feature)
                 results.append(obj)
             response = jsonify(results)
             response.status_code = 200
@@ -81,32 +66,31 @@ def create_app(config_name):
             feature.description = str(request.data.get('description', ''))
             feature.target_date = str(request.data.get('target_date', ''))
             feature.product_area = str(request.data.get('product_area', ''))
-
+            feature.client_priority = str(request.data.get('client_priority', ''))
             
             feature.save()
-            response = jsonify({
-                'client_id': feature.client_id,
-                'title': feature.title,
-                'description': feature.description,
-                'target_date': feature.target_date,
-                'product_area': feature.product_area,
-                'date_modified': feature.date_modified
-            })
+            response = jsonify(jsonify_data(feature))
             response.status_code = 200
             return response
 
         else:
         # GET
-            response = jsonify({
+            response = jsonify(jsonify_data(feature))
+            response.status_code = 200
+            return response
+
+    return app
+def jsonify_data(feature):
+
+    return {
                'client_id': feature.client_id,
                 'title': feature.title,
                 'description': feature.description,
                 'target_date': feature.target_date,
                 'product_area': feature.product_area,
                 'date_created': feature.date_created,
-                'date_modified': feature.date_modified
-            })
-            response.status_code = 200
-            return response
+                'date_modified': feature.date_modified,
+                'client_priority': feature.client_priority
+            };
 
-    return app
+    

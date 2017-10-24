@@ -4,8 +4,9 @@ from app import create_app
 
 # reading this from config file
 config_name = "development"
-app = create_app(config_name)
-CORS(app)
-
+demo = create_app(config_name)
+#print(demo.DEBUG)
+#CORS(app)
 if __name__ == '__main__':
-    app.run()
+    app = create_app(config_name)
+    app.run(debug = True)
