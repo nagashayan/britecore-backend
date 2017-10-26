@@ -29,10 +29,13 @@ def create_app(config_name):
             client_priority = str(request.data.get('client_priority', ''))
             if title:
                 feature = FeatureDetails(client_id, title, description, target_date, product_area, client_priority)
+                #check if the client already exists with same priority if yes then reorder
+                feature.checkPriorityOrder()
                 feature.save()
                 response = jsonify({
-               'client_id': feature.client_id,
-               'client_priority': feature.client_priority,
+                'id': feature.id,     
+                'client_id': feature.client_id,
+                'client_priority': feature.client_priority,
                 'title': feature.title,
                 'description': feature.description,
                 'target_date': feature.target_date,
@@ -49,6 +52,7 @@ def create_app(config_name):
 
             for feature in features:
                 obj ={
+                'id': feature.id,
                 'client_id': feature.client_id,
                 'client_priority': feature.client_priority,
                     'title': feature.title,
@@ -63,10 +67,10 @@ def create_app(config_name):
             response.status_code = 200
             return response
 
-    @app.route('/feature/<int:client_id>', methods=['GET', 'PUT', 'DELETE'])
-    def feature_manipulation(client_id, **kwargs):
-     # retrieve a buckelist using it's ID
-        feature = FeatureDetails.query.filter_by(client_id=client_id).first()
+    @app.route('/feature/<int:id>', methods=['GET', 'PUT', 'DELETE'])
+    def feature_manipulation(id, **kwargs):
+     # retrieve a featurelist using it's ID
+        feature = FeatureDetails.query.filter_by(id=id).first()
         if not feature:
             # Raise an HTTPException with a 404 not found status code
             abort(404)
@@ -74,21 +78,21 @@ def create_app(config_name):
         if request.method == 'DELETE':
             feature.delete()
             return {
-            "message": "feature {} deleted successfully".format(feature.client_id) 
+            "message": "feature {} deleted successfully".format(feature.id) 
          }, 200
 
         elif request.method == 'PUT':
 
-            feature.client_id = str(request.data.get('client_id', ''))
             feature.title = str(request.data.get('title', ''))
             feature.description = str(request.data.get('description', ''))
             feature.target_date = str(request.data.get('target_date', ''))
             feature.product_area = str(request.data.get('product_area', ''))
-            feature.client_priority = str(request.data.get('client_priority', ''))
             
             feature.save()
+            
             response = jsonify({
-               'client_id': feature.client_id,
+                'id': feature.id,
+                'client_id': feature.client_id,
                 'client_priority': feature.client_priority,
                 'title': feature.title,
                 'description': feature.description,
@@ -103,7 +107,8 @@ def create_app(config_name):
         else:
         # GET
             response = jsonify({
-               'client_id': feature.client_id,
+                'id': feature.id,
+                'client_id': feature.client_id,
                 'client_priority': feature.client_priority,
                 'title': feature.title,
                 'description': feature.description,
