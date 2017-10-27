@@ -14,7 +14,7 @@ class BasicTests(unittest.TestCase):
         
         self.assertEqual(self.app.debug, True)
 
-        self.feature = {'client_id':1,'title': 'Need filtering of data', 'description': 'should be able to filter to either order',
+        self.feature = {'client_id':1,'client_priority':1,'title': 'Need filtering of data', 'description': 'should be able to filter to either order',
         'product_area':'sales','target_date':'7-22-2018'}
     
         # binds the app to the current context
